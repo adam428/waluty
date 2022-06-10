@@ -1,0 +1,124 @@
+#firstPage{
+
+  background-color: #282828;
+
+  background-image: url("../../firstPage.jpg");
+
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+
+
+  color: white;
+  width: 100%;
+  height: 100vh;
+  box-shadow: 5px 10px 24px #888888;
+}
+
+
+#secondPage{
+
+  height: 100vh;
+  text-align: center;
+
+}
+
+#walutyForm{
+
+  margin-top: 30vh;
+
+}
+
+#firstContentPanel{
+
+  color: #282828;
+  background: #ffffff;
+  margin-top: 15vh;
+  min-height: 40vh;
+  float: left;
+  overflow:scroll;
+}
+
+#secondContentPanel{
+
+  background: #ffffff;
+  color: #282828;
+  font-size: 4vh;
+  text-align: center;
+  margin-top: 45vh;
+  min-height: 40vh;
+  max-height: 40vh;
+  overflow:scroll;
+
+}
+
+.slides{
+
+  display: none;
+  padding: 20px;
+  min-height: 40vh;
+  max-height: 40vh;
+
+}
+
+.slides h3{
+
+  text-decoration: underline;
+
+}
+
+.slides .source{
+
+  text-decoration: overline;
+
+}
+
+
+
+.footer{
+
+  background-color: #dadce0;
+  min-height: 30vh;
+  border-top: 1px solid #282828;
+
+}
+
+.footer h6{
+
+  text-align: center;
+
+}
+
+.modal {
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  padding-top: 60px;
+}
+
+/* Modal Content/Box */
+.modal-content {
+  margin: 5px auto; /* 15% from the top and centered */
+  width: 80%; /* Could be more or less, depending on screen size */
+}
+
+/* The Close Button */
+.close {
+  /* Position it in the top right corner outside of the modal */
+  position: absolute;
+  right: 25px;
+  top: 0;
+  color: #000;
+  font-size: 35px;
+  font-weight: bold;
+}
+
+/* Close button on hover */
+.close:hover,
+.close:focus {
+  color: red;
+  cursor: pointer;
+}
