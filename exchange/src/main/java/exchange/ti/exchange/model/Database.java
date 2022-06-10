@@ -282,23 +282,104 @@ public class Database {
 
     }
 
-    public boolean zablokujUsera(String login) {
-
+    public boolean wstawKurs(int idwaluty1, int idwaluty2, double kurs, String data){
         try {
             PreparedStatement zapytanie = polaczenie.prepareStatement(
-                    "UPDATE uzytkownicy SET isActive='false' WHERE login= ?"
+                    "INSERT INTO kursy VALUES (NULL,?,?,?,?)"
             );
-            zapytanie.setString(1, login);
+            zapytanie.setInt(1, idwaluty1);
+            zapytanie.setInt(2, idwaluty2);
+            zapytanie.setDouble(3, kurs);
+            zapytanie.setString(4, data);
+
             zapytanie.execute();
-            System.out.println("Zablokowano uzytkownika" + login);
+            System.out.println("Wstawiono kurs");
+
+        } catch (SQLException e) {
+            System.err.println("Blad przy wstawianiu kursu");
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
+    }
+
+    public boolean customQuery(String query, int option){
+        try {
+
+            if(option==0) {
+                PreparedStatement zapytanie = polaczenie.prepareStatement(
+                        "INSERT INTO kursy VALUES (NULL,?,?,?,?)"
+                );
+
+                zapytanie.execute();
+                System.out.println("Wykonało się");
+            }
+            else if(option==1){
+
+
+
+
+            }
+        } catch (SQLException e) {
+            System.err.println("Blad");
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
+    }
+
+
+    public boolean zablokujUsera(String login, String opcja) {
+
+        DatabaseUser uzytkownik = new DatabaseUser();
+
+        try {
+
+            ResultSet wynik = stat.executeQuery( //uwaga na SQL injection
+                    "SELECT * FROM uzytkownicy WHERE login = '" + login + "' LIMIT 1");
+
+            if(wynik.next()){
+            while (wynik.next()) {
+
+                uzytkownik.setLogin(login);
+            }
+
+            if(opcja.equals("zablokuj")){
+
+                PreparedStatement zapytanie = polaczenie.prepareStatement(
+                        "UPDATE uzytkownicy SET isActive='0' WHERE login= ?"
+                );
+                zapytanie.setString(1, login);
+                zapytanie.execute();
+                System.out.println("Zablokowano uzytkownika: " + login);
+
+                return true;
+            }
+            if(opcja.equals("odblokuj")){
+
+                PreparedStatement zapytanie = polaczenie.prepareStatement(
+                        "UPDATE uzytkownicy SET isActive='1' WHERE login= ?"
+                );
+                zapytanie.setString(1, login);
+                zapytanie.execute();
+                System.out.println("Odblokowano uzytkownika: " + login);
+
+                return true;
+            }
+            return false;
+            }
+            else{
+                return false;
+            }
+
 
         } catch (SQLException e) {
             System.err.println("Blad przy blokowaniu uzytkownika");
             e.printStackTrace();
             return false;
         }
-
-        return true;
 
     }
 }

@@ -33,7 +33,7 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <a class="navbar-brand font-weight-bold" href="#">EX
-                <img src="logo.png" width="30" height="30" alt="">
+<%--                <img src="logo.png" width="30" height="30" alt="">--%>
             </a>
 
             <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
@@ -253,16 +253,10 @@
 
                             <div class="container">
 
-
                                     Login: <input type="text" class="my-2" placeholder="Enter Username" name="login" required/><br>
                                     Haslo: <input type="password" class="my-2" placeholder="Enter Password" name="haslo" required></br>
-                                    <input class="btn btn-success my-2 mr-2" type="submit" value="Zaloguj">
+                                    <input class="btn btn-success my-2 offset-4" type="submit" value="Zaloguj">
 
-
-
-                                <label>
-                                    <input type="checkbox" checked="checked" name="remember"> Remember me
-                                </label>
                             </div>
                         </form>
                     </div>

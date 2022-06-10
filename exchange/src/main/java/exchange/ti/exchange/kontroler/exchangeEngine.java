@@ -164,12 +164,65 @@ public class exchangeEngine extends HttpServlet {
                 case "zablokuj":
 
                     String zablokujLog = request.getParameter("zablokujLog");
+                    String opcja = request.getParameter("opcja");
                     if(zablokujLog==null) zablokujLog="";
 
-                     boolean f = baza.zablokujUsera(zablokujLog);
+                     boolean f = baza.zablokujUsera(zablokujLog, opcja);
+
+                     if((f==true) && (opcja.equals("zablokuj"))){
+
+                         komunikat = "Zablokowano usera o loginie: "+zablokujLog;
+
+                     }
+                    else if((f==true) && (opcja.equals("odblokuj"))){
+
+                        komunikat = "Odblokowano usera o loginie: "+zablokujLog;
+
+                    }
+
+                     else{
+
+                         komunikat = "User "+zablokujLog+" nie istnieje";
+                     }
 
 
-                    komunikat = "Zablokowano usera o loginie: "+zablokujLog;
+
+
+
+                    break;
+
+                case "nkurs":
+
+                    int idwaluty1 = Integer.parseInt(request.getParameter("waluta3"));
+                    int idwaluty2 = Integer.parseInt(request.getParameter("waluta4"));
+                    double kurs1 = Double.parseDouble(request.getParameter("kurs"));
+                    System.out.println(kurs1);
+
+                    String data = request.getParameter("data");
+
+                    baza.wstawKurs(idwaluty1, idwaluty2,kurs1,data);
+
+                    komunikat = "Wstawiono nowy kurs ";
+
+                    break;
+
+                case "query":
+
+
+                    String qr = request.getParameter("cquery");
+
+                    if(qr.contains("SELECT")){
+
+                        baza.customQuery(qr, 0);
+
+                    }
+                    else{
+
+                        baza.customQuery(qr,1);
+
+                    }
+
+                    komunikat = "Wykonano zapytanie";
 
 
 
