@@ -33,7 +33,7 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <a class="navbar-brand font-weight-bold" href="#">EX
-                <img src="logo.png" width="30" height="30" alt="">
+<%--                <img src="logo.png" width="30" height="30" alt="">--%>
             </a>
 
             <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
@@ -95,13 +95,13 @@
                 </div>
 
                 <div class="slides">
-                    <h3>Example header1</h3>
+                    <h3>All the lorem</h3>
                     <p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable.</p>
                     <p class="source">see article <a href="">here</a></p>
                 </div>
 
                 <div class="slides">
-                    <h3>Example header2 </h3>
+                    <h3>Long established fact</h3>
                     <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy.</p>
                     <p class="source">see article <a href="">here</a></p>
                 </div>
@@ -109,7 +109,7 @@
             </div>
 
             <div id="secondContentPanel" class="hello col-md-6 offset-md-5 mobile-parallax">
-
+        <% if(uzytkownik.getUprawnienia()>0){%>
                 <ul class="list-group">
     <%
         try {
@@ -122,13 +122,16 @@
             polaczenie = DriverManager.getConnection(url);
             stat = polaczenie.createStatement();
 
-            ResultSet wynik1 = stat.executeQuery( //uwaga na SQL injection
-                    "SELECT nazwa, kurs FROM favCurrency LEFT JOIN waluty w on favCurrency.currencyId = w.id LEFT JOIN kursy k on w.id = k.idWaluty2 LEFT JOIN uzytkownicy u on favCurrency.userId = u.id WHERE u.login='"+uzytkownik.getLogin()+"'");
-
-            //przerobic dodajac subquery
+//            ResultSet wynik1 = stat.executeQuery("SELECT DISTINCT waluty.nazwa AS nazwa, IFNULL(max(kurs) OVER (PARTITION BY nazwa, u.login ORDER BY dataKursu DESC),0) AS kurs FROM waluty LEFT JOIN favCurrency ON waluty.id = favCurrency.currencyId LEFT JOIN kursy k on k.idWaluty = waluty.id LEFT JOIN uzytkownicy u on favCurrency.userId = u.id WHERE u.login='"+uzytkownik.getLogin()+"'");
+            ResultSet wynik1 = stat.executeQuery("SELECT DISTINCT nazwa, GROUP_CONCAT(kurs) FROM favCurrency\n" +
+                    "        LEFT JOIN waluty w on favCurrency.currencyId = w.id\n" +
+                    "        LEFT JOIN kursy k on w.id = k.idWaluty2\n" +
+                    "        LEFT JOIN uzytkownicy u on u.id = favCurrency.userId\n" +
+                    "GROUP BY nazwa");
             while(wynik1.next()){
                 String nazwa = wynik1.getString("nazwa");
-                String kurs = wynik1.getString("kurs");
+                String kurs = wynik1.getString("GROUP_CONCAT(kurs)");
+
                 out.println("<li class=\"list-group-item my-2\">"+nazwa+" - ");
                 out.println(kurs+"</li>");
             }
@@ -140,6 +143,12 @@
         }
     %>
                 </ul>
+
+                <%}else{
+
+                    out.println("<h1>Hello</h1>");
+
+                }%>
             </div>
         </div>
     </div>
@@ -222,13 +231,55 @@
 
             </form>
 
+            </br>
+            </br>
+            </br>
+
+            <% if(uzytkownik.getUprawnienia()>0){%>
+
+                <form action="index?akcja=dodajUlub" method="post">
+
+                    <label class="mx-2" for="w1">Dodaj ulubioną walute: </label>
+                    <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" name="walUlub">
+                        <%
+                            try {
+                                Class.forName("org.sqlite.JDBC");
+                                String url="jdbc:sqlite:C:\\Users\\Adam\\IdeaProjects\\exchange\\target\\exchange-1.0-SNAPSHOT\\WEB-INF\\Database.sqlite";
+
+                                Connection polaczenie;
+                                Statement stat;
+
+                                polaczenie = DriverManager.getConnection(url);
+                                stat = polaczenie.createStatement();
+
+                                ResultSet wynik1 = stat.executeQuery( //uwaga na SQL injection
+                                        "SELECT * FROM waluty WHERE id NOT IN (SELECT currencyId FROM favCurrency)");
+                                while(wynik1.next()){
+                                    int id = wynik1.getInt("id");
+                                    String nazwa = wynik1.getString("nazwa");
+                                    out.println("<option value="+id+">"+nazwa+"</option>");
+                                }
+
+                                stat.close();
+                            }
+                            catch(Exception e)
+                            {
+                                System.out.println("Could not connect");
+                            }
+
+
+                        %>
+
+                    </select>
+                </br>
+                    <input class="btn btn-success my-2 mr-2" type="submit" value="Zatwierdź">
+                </form>
+                <%}%>
                 <div class="container-fluid">
 
-                    <jsp:include page="/WEB-INF/widok/QueryResult.jsp"/>
+                    <jsp:include page="/QueryResult.jsp"/>
 
                 </div>
-
-                <h1 class="header mt-5">Lub</h1>
 
             </div>
         </div>
@@ -253,16 +304,10 @@
 
                             <div class="container">
 
-
                                     Login: <input type="text" class="my-2" placeholder="Enter Username" name="login" required/><br>
                                     Haslo: <input type="password" class="my-2" placeholder="Enter Password" name="haslo" required></br>
-                                    <input class="btn btn-success my-2 mr-2" type="submit" value="Zaloguj">
+                                    <input class="btn btn-success my-2 offset-4" type="submit" value="Zaloguj">
 
-
-
-                                <label>
-                                    <input type="checkbox" checked="checked" name="remember"> Remember me
-                                </label>
                             </div>
                         </form>
                     </div>

@@ -108,6 +108,19 @@ public class exchangeEngine extends HttpServlet {
                     break;
 
 
+                case "dodajUlub":
+
+                    login = uzytkownik.getLogin();
+                    int userId = uzytkownik.getId();
+                    int idwaluty = Integer.parseInt(request.getParameter("walUlub"));
+                    System.out.println(idwaluty);
+
+                    baza.wstawUlubWalute(userId, idwaluty);
+
+                    komunikat = "Wstawiono walute";
+
+                    break;
+
                 case "wyloguj":
 
                     uzytkownik = new DatabaseUser();
@@ -164,13 +177,60 @@ public class exchangeEngine extends HttpServlet {
                 case "zablokuj":
 
                     String zablokujLog = request.getParameter("zablokujLog");
+                    int zablokujid = Integer.parseInt(request.getParameter("zablokujLog"));
+                    String opcja = request.getParameter("opcja");
                     if(zablokujLog==null) zablokujLog="";
 
-                     boolean f = baza.zablokujUsera(zablokujLog);
+                     boolean f = baza.zablokujUsera(zablokujid, opcja);
+
+                     if((f==true) && (opcja.equals("zablokuj"))){
+
+                         komunikat = "Zablokowano usera";
+
+                     }
+                    else if((f==true) && (opcja.equals("odblokuj"))){
+
+                        komunikat = "Odblokowano usera";
+
+                    }
+
+                     else{
+
+                         komunikat = "User nie istnieje";
+                     }
 
 
-                    komunikat = "Zablokowano usera o loginie: "+zablokujLog;
+                    break;
 
+                case "nkurs":
+
+                    int idwaluty1 = Integer.parseInt(request.getParameter("waluta3"));
+                    int idwaluty2 = Integer.parseInt(request.getParameter("waluta4"));
+                    double kurs1 = Double.parseDouble(request.getParameter("kurs"));
+                    System.out.println(kurs1);
+
+                    String data = request.getParameter("data");
+
+                    baza.wstawKurs(idwaluty1, idwaluty2,kurs1,data);
+
+                    komunikat = "Wstawiono nowy kurs ";
+
+                    break;
+
+                case "uprawnienia":
+
+                    int uprawnienia = Integer.parseInt(request.getParameter("wart"));
+                    int id = Integer.parseInt(request.getParameter("permission"));
+                    if(uprawnienia==0 || uprawnienia==1 || uprawnienia==2){
+
+                        baza.zmienUprawnienia(id, uprawnienia);
+                        komunikat = "Zmieniono uprawnienia";
+                    }
+
+                    else{
+
+                        komunikat = "Błedne wywołanie !";
+                    }
 
 
                     break;

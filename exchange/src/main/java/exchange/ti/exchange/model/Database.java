@@ -171,6 +171,27 @@ public class Database {
         return true;
     }
 
+    public boolean wstawUlubWalute(int userId, int id) {
+
+        try {
+            PreparedStatement zapytanie = polaczenie.prepareStatement(
+                    "INSERT INTO favCurrency VALUES (NULL,?,?)"
+            );
+            zapytanie.setInt(1, userId);
+            zapytanie.setInt(2, id);
+
+            zapytanie.execute();
+            System.out.println("Wstawiono uzytkownika");
+
+        } catch (SQLException e) {
+            System.err.println("Blad przy wstawianiu uzytkownika");
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
+    }
+
 //    public List<DatabaseFavCurrency>wybierzFavCurrency(String login){
 //        List<DatabaseFavCurrency> records = new LinkedList<DatabaseFavCurrency>();
 //
@@ -282,15 +303,18 @@ public class Database {
 
     }
 
-    public boolean zablokujUsera(String login) {
+    public boolean zmienUprawnienia(int id, int uprawnienia){
 
         try {
-            PreparedStatement zapytanie = polaczenie.prepareStatement(
-                    "UPDATE uzytkownicy SET isActive='false' WHERE login= ?"
-            );
-            zapytanie.setString(1, login);
-            zapytanie.execute();
-            System.out.println("Zablokowano uzytkownika" + login);
+
+                    PreparedStatement zapytanie = polaczenie.prepareStatement(
+                            "UPDATE uzytkownicy SET uprawnienia='"+uprawnienia+"' WHERE id='"+id+"'"
+                    );
+                    zapytanie.execute();
+                    System.out.println("Zmieniono uprawnienia uzytkownika: ");
+
+                    return true;
+
 
         } catch (SQLException e) {
             System.err.println("Blad przy blokowaniu uzytkownika");
@@ -298,7 +322,80 @@ public class Database {
             return false;
         }
 
+    }
+
+    public boolean wstawKurs(int idwaluty1, int idwaluty2, double kurs, String data){
+        try {
+            PreparedStatement zapytanie = polaczenie.prepareStatement(
+                    "INSERT INTO kursy VALUES (NULL,?,?,?,?)"
+            );
+            zapytanie.setInt(1, idwaluty1);
+            zapytanie.setInt(2, idwaluty2);
+            zapytanie.setDouble(3, kurs);
+            zapytanie.setString(4, data);
+
+            zapytanie.execute();
+            System.out.println("Wstawiono kurs");
+
+        } catch (SQLException e) {
+            System.err.println("Blad przy wstawianiu kursu");
+            e.printStackTrace();
+            return false;
+        }
+
         return true;
+    }
+
+
+    public boolean zablokujUsera(int id, String opcja) {
+
+        DatabaseUser uzytkownik = new DatabaseUser();
+
+        try {
+
+            ResultSet wynik = stat.executeQuery( //uwaga na SQL injection
+                    "SELECT * FROM uzytkownicy WHERE id = '" + id + "' LIMIT 1");
+
+            if(wynik.next()){
+            while (wynik.next()) {
+
+                uzytkownik.setLogin(wynik.getString("login"));
+            }
+
+            if(opcja.equals("zablokuj")){
+
+                PreparedStatement zapytanie = polaczenie.prepareStatement(
+                        "UPDATE uzytkownicy SET isActive='0' WHERE id= ?"
+                );
+                zapytanie.setInt(1, id);
+                zapytanie.execute();
+                System.out.println("Zablokowano uzytkownika: " + uzytkownik.getLogin());
+
+                return true;
+            }
+            if(opcja.equals("odblokuj")){
+
+                PreparedStatement zapytanie = polaczenie.prepareStatement(
+                        "UPDATE uzytkownicy SET isActive='1' WHERE id= ?"
+                );
+                zapytanie.setInt(1, id);
+                zapytanie.execute();
+                System.out.println("Odblokowano uzytkownika: " + uzytkownik.getLogin());
+
+                return true;
+            }
+            return false;
+            }
+            else{
+                return false;
+            }
+
+
+        } catch (SQLException e) {
+            System.err.println("Blad przy blokowaniu uzytkownika");
+            e.printStackTrace();
+            return false;
+        }
 
     }
 }

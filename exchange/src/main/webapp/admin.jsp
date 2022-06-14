@@ -40,7 +40,7 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <a class="navbar-brand font-weight-bold" href="#">EX
-                <img src="../img/logo.png" width="30" height="30" alt="">
+<%--                <img src="../img/logo.png" width="30" height="30" alt="">--%>
             </a>
 
             <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
@@ -85,16 +85,185 @@
 
     <div class="row p-0 mt-5">
 
-        <div id="firstPage">
-            <div class="container mt-5">
+        <div id="firstPageAdmin">
+            <div class="container mt-5 text-center">
+                <h4>Blokowanie lub odblokowywanie</h4>
+
                 <form class="modal-content animate mt-5" action="index?akcja=zablokuj" method="post">
 
+                    <select class="form-select form-select-lg mt-5 mb-3 col-4 offset-4" aria-label=".form-select-lg example" name="zablokujLog">
+                        <%
+                            try {
+                                Class.forName("org.sqlite.JDBC");
+                                String url="jdbc:sqlite:C:\\Users\\Adam\\IdeaProjects\\exchange\\target\\exchange-1.0-SNAPSHOT\\WEB-INF\\Database.sqlite";
+
+                                Connection polaczenie;
+                                Statement stat;
+
+                                polaczenie = DriverManager.getConnection(url);
+                                stat = polaczenie.createStatement();
+
+                                ResultSet wynik1 = stat.executeQuery( //uwaga na SQL injection
+                                        "SELECT * FROM uzytkownicy");
+                                while(wynik1.next()){
+                                    int id = wynik1.getInt("id");
+                                    String login = wynik1.getString("login");
+                                    out.println("<option value="+id+">"+login+"</option>");
+                                }
+
+                                stat.close();
+                            }
+                            catch(Exception e)
+                            {
+                                System.out.println("Could not connect");
+                            }
 
 
-                    <input type="text" class="my-2" placeholder="Wprowadź login usera:" name="zablokujLog" required/><br>
+                        %>
+                    </select>
 
-                    <input class="btn btn-success my-2 mr-2" type="submit" value="Zablokuj">
 
+                    <select id="operacja" class="form-select form-select-lg mb-3 col-4 offset-4" aria-label=".form-select-lg example" name="opcja">
+                        <option value="zablokuj">Zablokuj usera</option>
+                        <option value="odblokuj">Odblokuj usera</option>
+                    </select>
+                    <input class="btn btn-success my-2 mr-2 col-2 offset-5" type="submit" value="Potwierdź">
+
+                </form>
+            </div>
+
+            <div class="container mt-5 text-center">
+
+                <h4>Dodanie nowego kursu</h4>
+
+                <form class="modal-content animate mt-5" action="index?akcja=nkurs" method="post">
+
+                    <select id="wal1" class="form-select form-select-lg my-3 col-4 offset-4" aria-label=".form-select-lg example" name="waluta3">
+                        <%
+                            try {
+                                Class.forName("org.sqlite.JDBC");
+                                String url="jdbc:sqlite:C:\\Users\\Adam\\IdeaProjects\\exchange\\target\\exchange-1.0-SNAPSHOT\\WEB-INF\\Database.sqlite";
+
+                                Connection polaczenie;
+                                Statement stat;
+
+                                polaczenie = DriverManager.getConnection(url);
+                                stat = polaczenie.createStatement();
+
+                                ResultSet wynik1 = stat.executeQuery( //uwaga na SQL injection
+                                        "SELECT * FROM waluty");
+                                while(wynik1.next()){
+                                    int id = wynik1.getInt("id");
+                                    String nazwa = wynik1.getString("nazwa");
+                                    out.println("<option value="+id+">"+nazwa+"</option>");
+                                }
+
+                                stat.close();
+                            }
+                            catch(Exception e)
+                            {
+                                System.out.println("Could not connect");
+                            }
+
+
+                        %>
+
+                    </select>
+
+
+                    <select id="wal2" class="form-select form-select-lg mb-3 col-4 offset-4" aria-label=".form-select-lg example" name="waluta4">
+                        <%
+                            try {
+                                Class.forName("org.sqlite.JDBC");
+                                String url="jdbc:sqlite:C:\\Users\\Adam\\IdeaProjects\\exchange\\target\\exchange-1.0-SNAPSHOT\\WEB-INF\\Database.sqlite";
+
+                                Connection polaczenie;
+                                Statement stat;
+
+                                polaczenie = DriverManager.getConnection(url);
+                                stat = polaczenie.createStatement();
+
+                                ResultSet wynik1 = stat.executeQuery( //uwaga na SQL injection
+                                        "SELECT * FROM waluty");
+                                while(wynik1.next()){
+                                    int id = wynik1.getInt("id");
+                                    String nazwa = wynik1.getString("nazwa");
+                                    out.println("<option value="+id+">"+nazwa+"</option>");
+                                }
+
+                                stat.close();
+                            }
+                            catch(Exception e)
+                            {
+                                System.out.println("Could not connect");
+                            }
+
+
+                        %>
+                    </select>
+
+                    <input type="number" step="0.01" placeholder="Wartośc kursu" class=" mb-3 col-4 offset-4" name="kurs"/>
+                    <input type="text" placeholder="Data kursu" class="col-4 offset-4" name="data"/>
+
+                    <input class="btn btn-success my-2 mr-2 col-2 offset-5 mb-3" type="submit" value="Potwierdź">
+
+                </form>
+            </div>
+
+            <div class="container mt-5 text-center">
+
+                <h4>Query</h4>
+
+                <form class="modal-content animate mt-5" action="./QueryResult.jsp" target="_blank" method="post">
+
+
+                    <textarea placeholder="Enter custom query" class="my-3 col-6 offset-3" name="cquery" cols="40" rows="5"></textarea>
+
+                    <input class="btn btn-success my-2 mr-2 col-2 offset-5" type="submit" value="Potwierdź">
+
+                </form>
+            </div>
+
+            <div class="container mt-5 text-center">
+
+                <h4>Zmiana uprawnień</h4>
+
+                <form class="modal-content animate mt-5 text-center" action="index?akcja=uprawnienia" method="post">
+
+                    <select id="uprawn" class="form-select form-select-lg mt-5 mb-3 col-4 offset-4" aria-label=".form-select-lg example" name="permission">
+                        <%
+                            try {
+                                Class.forName("org.sqlite.JDBC");
+                                String url="jdbc:sqlite:C:\\Users\\Adam\\IdeaProjects\\exchange\\target\\exchange-1.0-SNAPSHOT\\WEB-INF\\Database.sqlite";
+
+                                Connection polaczenie;
+                                Statement stat;
+
+                                polaczenie = DriverManager.getConnection(url);
+                                stat = polaczenie.createStatement();
+
+                                ResultSet wynik1 = stat.executeQuery( //uwaga na SQL injection
+                                        "SELECT * FROM uzytkownicy");
+                                while(wynik1.next()){
+                                    int id = wynik1.getInt("id");
+                                    String login = wynik1.getString("login");
+                                    out.println("<option value="+id+">"+login+"</option>");
+                                }
+
+                                stat.close();
+                            }
+                            catch(Exception e)
+                            {
+                                System.out.println("Could not connect");
+                            }
+
+
+                        %>
+                    </select>
+
+                    <input class="my-3 text-center my-2 mr-2 col-2 offset-5 mb-3"  placeholder="Uprawnienia" type="number" min="0" max="2" name="wart"/>
+
+                    <input class="btn btn-success my-2 mr-2 col-2 offset-5 mb-3" type="submit" value="Potwierdź">
 
                 </form>
             </div>
@@ -182,11 +351,9 @@
 
                 <div class="container-fluid">
 
-                    <jsp:include page="/WEB-INF/widok/QueryResult.jsp"/>
+                    <jsp:include page="/QueryResult.jsp"/>
 
                 </div>
-
-                <h1 class="header mt-5">Lub</h1>
 
             </div>
         </div>
@@ -214,13 +381,9 @@
 
                                 Login: <input type="text" class="my-2" placeholder="Enter Username" name="login" required/><br>
                                 Haslo: <input type="password" class="my-2" placeholder="Enter Password" name="haslo" required></br>
-                                <input class="btn btn-success my-2 mr-2" type="submit" value="Zaloguj">
+                                <input class="btn btn-success my-2 offset-4" type="submit" value="Zaloguj">
 
 
-
-                                <label>
-                                    <input type="checkbox" checked="checked" name="remember"> Remember me
-                                </label>
                             </div>
                         </form>
                     </div>
@@ -301,6 +464,7 @@
 
 <%}else{
 
-    out.print("BRAK URPAWNIEN!");
+    out.print("Brak uprawnień do wyświetlenia tego zasobu! Strona głowna - ");
+    out.println("<a class=\"nav-link\" href=\"index.jsp\">Home</a>");
     }
     %>
